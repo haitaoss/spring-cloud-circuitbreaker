@@ -52,7 +52,9 @@ public class SpringRetryCircuitBreaker implements CircuitBreaker {
 		retryTemplate.setBackOffPolicy(config.getBackOffPolicy());
 		retryTemplate.setRetryPolicy(config.getRetryPolicy());
 
+		// 存在 retryTemplateCustomizer 就用来对 retryTemplate 进行配置
 		retryTemplateCustomizer.ifPresent(customizer -> customizer.customize(retryTemplate));
+		// 使用 retryTemplate 执行方法
 		return retryTemplate.execute(context -> toRun.get(), context -> fallback.apply(context.getLastThrowable()),
 				new DefaultRetryState(id, config.isForceRefreshState(), config.getStateClassifier()));
 	}

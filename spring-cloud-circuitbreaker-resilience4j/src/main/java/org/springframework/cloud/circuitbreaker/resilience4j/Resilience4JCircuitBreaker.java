@@ -114,18 +114,27 @@ public class Resilience4JCircuitBreaker implements CircuitBreaker {
 
 	@Override
 	public <T> T run(Supplier<T> toRun, Function<Throwable, T> fallback) {
+		// 拿到标签
 		final io.vavr.collection.Map<String, String> tags = io.vavr.collection.HashMap.of(CIRCUIT_BREAKER_GROUP_TAG,
 				this.groupName);
 
+		// 从 CircuitBreakerRegistry 的得到 defaultCircuitBreaker
 		io.github.resilience4j.circuitbreaker.CircuitBreaker defaultCircuitBreaker = registry.circuitBreaker(this.id,
 				this.circuitBreakerConfig, tags);
+
+		// 使用 circuitBreakerCustomizer 对 defaultCircuitBreaker 进行配置
 		circuitBreakerCustomizer.ifPresent(customizer -> customizer.customize(defaultCircuitBreaker));
+
+		// 从 TimeLimiterRegistry 的得到 defaultCircuitBreaker
 		TimeLimiter timeLimiter = timeLimiterRegistry.timeLimiter(id, timeLimiterConfig, tags);
+
 		if (bulkheadProvider != null) {
+			// 使用 bulkheadProvider 执行逻辑
 			return bulkheadProvider.run(this.groupName, toRun, fallback, defaultCircuitBreaker, timeLimiter, tags);
 		}
 		else {
 			if (executorService != null) {
+				// 使用 executorService 来执行方法
 				Supplier<Future<T>> futureSupplier = () -> executorService.submit(toRun::get);
 				Callable restrictedCall = TimeLimiter.decorateFutureSupplier(timeLimiter, futureSupplier);
 				Callable<T> callable = io.github.resilience4j.circuitbreaker.CircuitBreaker

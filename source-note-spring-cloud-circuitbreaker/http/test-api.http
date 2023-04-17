@@ -1,0 +1,17 @@
+### 查看 features
+GET http://localhost:8080/actuator/features
+
+### 查看 metrics
+GET http://localhost:8080/actuator/metrics
+
+### 更新属性值
+#POST http://localhost:8080/actuator/env?name=FeignClient.StoreClient.name&value=s2
+POST http://localhost:8080/actuator/env?name=feign.circuitbreaker.fast-fail&value=false
+Content-Type: application/json
+
+### 刷新 scope bean
+POST http://localhost:8080/actuator/refresh
+Content-Type: application/json
+
+###调用 call 接口
+GET http://localhost:8080/call

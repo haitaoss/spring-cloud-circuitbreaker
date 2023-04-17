@@ -53,6 +53,7 @@
 		<module>spring-cloud-starter-circuitbreaker</module>
 		<module>docs</module>
 		<module>spring-cloud-circuitbreaker-spring-retry</module>
+		<module>source-note-spring-cloud-circuitbreaker</module>
 	</modules>
 	<build>
 		<plugins>

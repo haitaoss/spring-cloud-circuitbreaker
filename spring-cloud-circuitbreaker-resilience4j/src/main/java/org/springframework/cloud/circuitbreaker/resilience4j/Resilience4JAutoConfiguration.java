@@ -143,6 +143,7 @@ public class Resilience4JAutoConfiguration {
 					taggedCircuitBreakerMetrics = TaggedCircuitBreakerMetrics
 							.ofCircuitBreakerRegistry(factory.getCircuitBreakerRegistry());
 				}
+				// 绑定到 meterRegistry 中
 				taggedCircuitBreakerMetrics.bindTo(meterRegistry);
 			}
 			if (bulkheadProvider != null) {

@@ -1,0 +1,7 @@
+ feign:
+  circuitbreaker:
+    # 设置为 true 才行，否则不是使用 CircuitBreakerFactory 来执行 Feign 接口方法
+    enabled: true
+ spring:
+   profiles:
+     include: resilience4j

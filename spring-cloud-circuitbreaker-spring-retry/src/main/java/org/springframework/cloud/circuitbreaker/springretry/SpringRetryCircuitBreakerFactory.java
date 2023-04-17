@@ -51,7 +51,13 @@ public class SpringRetryCircuitBreakerFactory
 	@Override
 	public CircuitBreaker create(String id) {
 		Assert.hasText(id, "A circuit breaker must have an id");
+		// 获取 id 对应的 SpringRetryConfig，没有就使用默认的
 		SpringRetryConfigBuilder.SpringRetryConfig config = getConfigurations().computeIfAbsent(id, defaultConfig);
+		/**
+		 * 使用 config 和 Customizer<RetryTemplate> 构造出 SpringRetryCircuitBreaker
+		 *
+		 * 注：Customizer<RetryTemplate> 是用来配置 RetryTemplate 的，具体可配置啥输入 spring-retry 的知识点了
+		 * */
 		return new SpringRetryCircuitBreaker(id, config, Optional.ofNullable(retryTemplateCustomizers.get(id)));
 	}
 

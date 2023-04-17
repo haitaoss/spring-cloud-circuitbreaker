@@ -118,6 +118,7 @@ public class Resilience4JCircuitBreakerFactory extends
 	public Resilience4JCircuitBreaker create(String id, String groupName) {
 		Assert.hasText(id, "A CircuitBreaker must have an id.");
 		Assert.hasText(groupName, "A CircuitBreaker must have a group name.");
+		// 会用到 executorServices
 		final ExecutorService groupExecutorService = executorServices.computeIfAbsent(groupName,
 				group -> Executors.newCachedThreadPool());
 		return create(id, groupName, groupExecutorService);
@@ -125,14 +126,17 @@ public class Resilience4JCircuitBreakerFactory extends
 
 	public void addCircuitBreakerCustomizer(Customizer<CircuitBreaker> customizer, String... ids) {
 		for (String id : ids) {
+			// 记录每个id对应的 customizer
 			circuitBreakerCustomizers.put(id, customizer);
 		}
 	}
 
 	private Resilience4JCircuitBreaker create(String id, String groupName,
 			ExecutorService circuitBreakerExecutorService) {
+		// 根据 id 获取 config 没有预设就使用默认的
 		Resilience4JConfigBuilder.Resilience4JCircuitBreakerConfiguration config = getConfigurations()
 				.computeIfAbsent(id, defaultConfiguration);
+		// 是禁用 线程池的
 		if (resilience4JConfigurationProperties.isDisableThreadPool()) {
 			return new Resilience4JCircuitBreaker(id, groupName, config.getCircuitBreakerConfig(),
 					config.getTimeLimiterConfig(), circuitBreakerRegistry, timeLimiterRegistry,

@@ -1,0 +1,28 @@
+spring:
+  cloud:
+    circuitbreaker:
+      resilience4j:
+        # false 表示不使用线程池执行 目标方法
+        disableThreadPool: true
+
+# 配置 CircuitBreaker 和 TimeLimiter 实例。这是 resilience4j 的东西
+resilience4j.circuitbreaker:
+  instances:
+    backendA:
+      registerHealthIndicator: true
+      slidingWindowSize: 100
+    backendB:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 3
+      slidingWindowType: TIME_BASED
+      recordFailurePredicate: io.github.robwin.exception.RecordFailurePredicate
+
+resilience4j.timelimiter:
+  instances:
+    backendA:
+      timeoutDuration: 2s
+      cancelRunningFuture: true
+    backendB:
+      timeoutDuration: 1s
+      cancelRunningFuture: false

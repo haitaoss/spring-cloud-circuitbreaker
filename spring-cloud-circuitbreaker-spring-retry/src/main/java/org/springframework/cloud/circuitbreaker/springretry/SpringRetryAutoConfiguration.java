@@ -36,13 +36,18 @@ import org.springframework.retry.support.RetryTemplate;
 @ConditionalOnClass(RetryTemplate.class)
 public class SpringRetryAutoConfiguration {
 
+	// 通过依赖注入得到 Customizer<SpringRetryCircuitBreakerFactory>
 	@Autowired(required = false)
 	private List<Customizer<SpringRetryCircuitBreakerFactory>> customizers = new ArrayList<>();
 
 	@Bean
 	@ConditionalOnMissingBean(CircuitBreakerFactory.class)
 	public CircuitBreakerFactory springRetryCircuitBreakerFactory() {
+		// SpringRetryCircuitBreakerFactory 继承 CircuitBreakerFactory
 		SpringRetryCircuitBreakerFactory factory = new SpringRetryCircuitBreakerFactory();
+		/**
+		 * 使用 List<Customizer<SpringRetryCircuitBreakerFactory>> 对 SpringRetryCircuitBreakerFactory 进行定制化
+		 * */
 		customizers.forEach(customizer -> customizer.customize(factory));
 		return factory;
 	}
